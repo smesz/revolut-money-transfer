@@ -8,14 +8,7 @@ import com.revolut.money.transfer.account.service.AccountValidator;
 import com.revolut.money.transfer.model.Account;
 import com.revolut.money.transfer.model.AccountOperation;
 import com.revolut.money.transfer.model.DepositOperation;
-import com.revolut.money.transfer.model.Person;
 import com.revolut.money.transfer.model.WithdrawOperation;
-import com.revolut.money.transfer.person.dao.UserDao;
-import com.revolut.money.transfer.person.exception.mappers.UserAlreadyExistsExceptionMapper;
-import com.revolut.money.transfer.person.exception.mappers.UserDoesNotExistExceptionMapper;
-import com.revolut.money.transfer.person.rest.UserResource;
-import com.revolut.money.transfer.person.service.PersonConverter;
-import com.revolut.money.transfer.person.service.UserService;
 
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
@@ -29,7 +22,7 @@ public class MoneyTransferApplication extends Application<MoneyTransferConfigura
 	private static final String APPLICATION_NAME = "revolut-transfers";
 
 	private final HibernateBundle<MoneyTransferConfiguration> hibernate =
-			new HibernateBundle<MoneyTransferConfiguration>(Person.class, Account.class, AccountOperation.class,
+			new HibernateBundle<MoneyTransferConfiguration>(Account.class, AccountOperation.class,
 					DepositOperation.class, WithdrawOperation.class) {
 				@Override
 				public DataSourceFactory getDataSourceFactory(MoneyTransferConfiguration configuration) {
@@ -58,28 +51,13 @@ public class MoneyTransferApplication extends Application<MoneyTransferConfigura
 	}
 
 	public void run(MoneyTransferConfiguration configuration, Environment environment) {
-
-		/*
-		 * USER logic
-		 */
-		UserDao userDao = new UserDao(hibernate.getSessionFactory());
-		PersonConverter personConverter = new PersonConverter();
-		UserService userService = new UserService(userDao, personConverter);
-
-		environment.jersey().register(
-				new UserResource(userService, personConverter)
-		);
-
-		environment.jersey().register(new UserAlreadyExistsExceptionMapper());
-		environment.jersey().register(new UserDoesNotExistExceptionMapper());
-
 		/*
 		 * ACCOUNT logic
 		 */
 		AccountDao accountDao = new AccountDao(hibernate.getSessionFactory());
 		AccountConverter accountConverter = new AccountConverter();
-		AccountValidator accountValidator = new AccountValidator(accountDao, userDao);
-		AccountService accountService = new AccountService(accountDao, userService, accountConverter, accountValidator);
+		AccountValidator accountValidator = new AccountValidator(accountDao);
+		AccountService accountService = new AccountService(accountDao, accountConverter, accountValidator);
 
 		environment.jersey().register(
 				new AccountResource(accountService, accountConverter)

@@ -5,25 +5,22 @@ import java.util.Date;
 import com.revolut.money.transfer.account.dao.AccountDao;
 import com.revolut.money.transfer.model.Account;
 import com.revolut.money.transfer.model.DepositOperation;
-import com.revolut.money.transfer.model.Person;
 import com.revolut.money.transfer.model.WithdrawOperation;
 import com.revolut.money.transfer.model.account.BalanceResponse;
 import com.revolut.money.transfer.model.account.MoneyOperationRequest;
+import com.revolut.money.transfer.model.account.MoneyOperationResponse;
 import com.revolut.money.transfer.model.account.NewAccountRequest;
 import com.revolut.money.transfer.model.account.NewAccountResponse;
-import com.revolut.money.transfer.person.service.UserService;
 
 public class AccountService {
 
 	private final AccountDao accountDao;
-	private final UserService userService;
 	private final AccountConverter converter;
 	private final AccountValidator validator;
 
-	public AccountService(AccountDao accountDao, UserService userService, AccountConverter converter,
+	public AccountService(AccountDao accountDao, AccountConverter converter,
 			AccountValidator validator) {
 		this.accountDao = accountDao;
-		this.userService = userService;
 		this.converter = converter;
 		this.validator = validator;
 	}
@@ -35,10 +32,12 @@ public class AccountService {
 		return converter.toResponse(account);
 	}
 
-	public void makeDeposit(long accountId, MoneyOperationRequest request) {
+	public MoneyOperationResponse makeDeposit(long accountId, MoneyOperationRequest request) {
 		Account account = accountDao.findById(accountId);
 
-		account.addOperation(new DepositOperation(request.getAmount(), request.getCurrency(), new Date()));
+		account.addOperation(
+				new DepositOperation(request.getAmount(), request.getCurrency(), new Date())
+		);
 	}
 
 	public void makeWithdraw(long accountId, MoneyOperationRequest request) {
@@ -48,12 +47,7 @@ public class AccountService {
 	}
 
 	private Account createAccountObject(NewAccountRequest request) {
-		Person accountOwner = getOwner(request.getOwnerId());
-		return converter.fromRequest(request, accountOwner);
-	}
-
-	private Person getOwner(long personId) {
-		return userService.getUser(personId);
+		return converter.fromRequest(request);
 	}
 
 	public BalanceResponse getBalance(long accountId) {

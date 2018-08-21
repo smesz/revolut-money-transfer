@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -22,10 +21,6 @@ public class Account {
 	private String currency;
 	private String name;
 
-	@ManyToOne
-	@JoinColumn(name = "fk_owner")
-	private Person owner;
-
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "account_id")
 	private List<AccountOperation> accountOperations;
@@ -33,11 +28,10 @@ public class Account {
 	public Account() {
 	}
 
-	public Account(long id, String name, String currency, Person accountOwner) {
+	public Account(long id, String name, String currency) {
 		this.id = id;
 		this.name = name;
 		this.currency = currency;
-		this.owner = accountOwner;
 		this.accountOperations = new ArrayList<>();
 	}
 
@@ -78,14 +72,6 @@ public class Account {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Person getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Person owner) {
-		this.owner = owner;
 	}
 
 	public List<AccountOperation> getAccountOperations() {
