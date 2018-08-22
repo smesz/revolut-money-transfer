@@ -1,4 +1,4 @@
-package com.revolut.money.transfer.model.account;
+package com.revolut.money.transfer.model.dto;
 
 public class NewAccountRequest {
 

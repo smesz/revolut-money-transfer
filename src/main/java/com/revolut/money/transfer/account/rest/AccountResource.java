@@ -9,8 +9,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.revolut.money.transfer.account.service.AccountService;
-import com.revolut.money.transfer.model.account.MoneyOperationRequest;
-import com.revolut.money.transfer.model.account.NewAccountRequest;
+import com.revolut.money.transfer.model.dto.MoneyOperationRequest;
+import com.revolut.money.transfer.model.dto.NewAccountRequest;
 
 import io.dropwizard.hibernate.UnitOfWork;
 

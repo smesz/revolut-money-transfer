@@ -3,12 +3,12 @@ package com.revolut.money.transfer.account.service;
 import com.revolut.money.transfer.account.dao.AccountDao;
 import com.revolut.money.transfer.model.Account;
 import com.revolut.money.transfer.model.MoneyDto;
-import com.revolut.money.transfer.model.account.BalanceResponse;
-import com.revolut.money.transfer.model.account.MoneyOperationRequest;
-import com.revolut.money.transfer.model.account.MoneyOperationResponse;
-import com.revolut.money.transfer.model.account.MoneyOperationResponse.Status;
-import com.revolut.money.transfer.model.account.NewAccountRequest;
-import com.revolut.money.transfer.model.account.NewAccountResponse;
+import com.revolut.money.transfer.model.dto.BalanceResponse;
+import com.revolut.money.transfer.model.dto.MoneyOperationRequest;
+import com.revolut.money.transfer.model.dto.MoneyOperationResponse;
+import com.revolut.money.transfer.model.dto.MoneyOperationResponse.Status;
+import com.revolut.money.transfer.model.dto.NewAccountRequest;
+import com.revolut.money.transfer.model.dto.NewAccountResponse;
 import com.revolut.money.transfer.util.MoneyFormatter;
 
 public class AccountService {

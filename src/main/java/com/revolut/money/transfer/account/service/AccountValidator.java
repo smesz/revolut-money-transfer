@@ -2,7 +2,7 @@ package com.revolut.money.transfer.account.service;
 
 import com.revolut.money.transfer.account.dao.AccountDao;
 import com.revolut.money.transfer.account.exception.AccountAlreadyExistsException;
-import com.revolut.money.transfer.model.account.NewAccountRequest;
+import com.revolut.money.transfer.model.dto.NewAccountRequest;
 
 public class AccountValidator {
 
