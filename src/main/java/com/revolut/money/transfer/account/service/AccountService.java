@@ -1,28 +1,30 @@
 package com.revolut.money.transfer.account.service;
 
-import java.util.Date;
-
 import com.revolut.money.transfer.account.dao.AccountDao;
 import com.revolut.money.transfer.model.Account;
-import com.revolut.money.transfer.model.DepositOperation;
-import com.revolut.money.transfer.model.WithdrawOperation;
+import com.revolut.money.transfer.model.MoneyDto;
 import com.revolut.money.transfer.model.account.BalanceResponse;
 import com.revolut.money.transfer.model.account.MoneyOperationRequest;
 import com.revolut.money.transfer.model.account.MoneyOperationResponse;
+import com.revolut.money.transfer.model.account.MoneyOperationResponse.Status;
 import com.revolut.money.transfer.model.account.NewAccountRequest;
 import com.revolut.money.transfer.model.account.NewAccountResponse;
+import com.revolut.money.transfer.util.MoneyFormatter;
 
 public class AccountService {
 
 	private final AccountDao accountDao;
 	private final AccountConverter converter;
 	private final AccountValidator validator;
+	private final MoneyOperationsExecutor moneyOperationsExecutor;
 
-	public AccountService(AccountDao accountDao, AccountConverter converter,
-			AccountValidator validator) {
+	public AccountService(AccountDao accountDao, AccountConverter converter, AccountValidator validator,
+			MoneyOperationsExecutor moneyOperationsExecutor) {
+
 		this.accountDao = accountDao;
 		this.converter = converter;
 		this.validator = validator;
+		this.moneyOperationsExecutor = moneyOperationsExecutor;
 	}
 
 	public NewAccountResponse createAccount(NewAccountRequest request) {
@@ -35,15 +37,33 @@ public class AccountService {
 	public MoneyOperationResponse makeDeposit(long accountId, MoneyOperationRequest request) {
 		Account account = accountDao.findById(accountId);
 
-		account.addOperation(
-				new DepositOperation(request.getAmount(), request.getCurrency(), new Date())
+		moneyOperationsExecutor.forAccount(account)
+				.deposit(MoneyFormatter.parse(request.getAmount()))
+				.inCurrency(request.getCurrency())
+				.execute();
+
+		return new MoneyOperationResponse(
+				account.getName(),
+				"deposit",
+				new MoneyDto(request.getAmount(), request.getCurrency()),
+				Status.ok()
 		);
 	}
 
-	public void makeWithdraw(long accountId, MoneyOperationRequest request) {
+	public MoneyOperationResponse makeWithdraw(long accountId, MoneyOperationRequest request) {
 		Account account = accountDao.findById(accountId);
 
-		account.addOperation(new WithdrawOperation(request.getAmount(), request.getCurrency(), new Date()));
+		moneyOperationsExecutor.forAccount(account)
+				.withdraw(MoneyFormatter.parse(request.getAmount()))
+				.inCurrency(request.getCurrency())
+				.execute();
+
+		return new MoneyOperationResponse(
+				account.getName(),
+				"withdraw",
+				new MoneyDto(request.getAmount(), request.getCurrency()),
+				Status.ok()
+		);
 	}
 
 	private Account createAccountObject(NewAccountRequest request) {

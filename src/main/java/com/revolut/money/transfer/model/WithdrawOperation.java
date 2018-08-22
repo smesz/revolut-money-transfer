@@ -1,5 +1,6 @@
 package com.revolut.money.transfer.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.DiscriminatorValue;
@@ -9,12 +10,15 @@ import javax.persistence.Entity;
 @DiscriminatorValue("withdraw")
 public class WithdrawOperation extends AccountOperation {
 
-	public WithdrawOperation(double amount, String currency, Date createdOn) {
-		super(amount, currency, createdOn);
+	public WithdrawOperation(BigDecimal amount, BigDecimal amountInAccountCurrency, String currency, Date createdOn) {
+		super(amount, amountInAccountCurrency, currency, createdOn);
+	}
+
+	public WithdrawOperation() {
 	}
 
 	@Override
-	double apply(double actualBalance) {
-		return actualBalance - getAmount();
+	BigDecimal apply(BigDecimal actualBalance) {
+		return actualBalance.subtract(getAmountInAccountCurrency());
 	}
 }

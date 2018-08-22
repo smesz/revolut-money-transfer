@@ -1,6 +1,8 @@
 package com.revolut.money.transfer.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -36,13 +38,22 @@ public class Account {
 	}
 
 	@Transient
-	public void addOperation(AccountOperation operation) {
-		getAccountOperations().add(operation);
+	public void makeDeposit(BigDecimal amount, BigDecimal amountInAccountCurrency, String currency) {
+		getAccountOperations().add(
+				new DepositOperation(amount, amountInAccountCurrency, currency, new Date())
+		);
 	}
 
 	@Transient
-	public double getBalance() {
-		double balance = 0.0;
+	public void makeWithdraw(BigDecimal amount, BigDecimal amountInAccountCurrency, String currency) {
+		getAccountOperations().add(
+				new WithdrawOperation(amount, amountInAccountCurrency, currency, new Date())
+		);
+	}
+
+	@Transient
+	public BigDecimal getBalance() {
+		BigDecimal balance = BigDecimal.ZERO;
 		for (AccountOperation operation : getAccountOperations()) {
 			balance = operation.apply(balance);
 		}

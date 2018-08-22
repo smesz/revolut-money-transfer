@@ -6,21 +6,31 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <!--<changeSet id="1" author="krzysztof.uroda">-->
-        <!--<createTable tableName="users">-->
-            <!--<column name="id" type="bigint" autoIncrement="true">-->
-                <!--<constraints primaryKey="true" nullable="false"/>-->
-            <!--</column>-->
-            <!--<column name="firstName" type="varchar(255)">-->
-                <!--<constraints nullable="false"/>-->
-            <!--</column>-->
-            <!--<column name="lastName" type="varchar(255)">-->
-                <!--<constraints nullable="false"/>-->
-            <!--</column>-->
-            <!--<column name="email" type="varchar(255)">-->
-                <!--<constraints nullable="false"/>-->
-            <!--</column>-->
-        <!--</createTable>-->
-    <!--</changeSet>-->
+    <changeSet id="1" author="krzysztof.uroda">
+        <createTable tableName="ExchangeRate">
+            <column name="fromCurrency" type="varchar(10)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="toCurrency" type="varchar(10)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="exchangeRate" type="decimal">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="krzysztof.uroda">
+        <insert tableName="ExchangeRate">
+            <column name="fromCurrency">USD</column>
+            <column name="toCurrency">EUR</column>
+            <column name="exchangeRate">0.863023</column>
+        </insert>
+        <insert tableName="ExchangeRate">
+            <column name="fromCurrency">EUR</column>
+            <column name="toCurrency">USD</column>
+            <column name="exchangeRate">1.15874</column>
+        </insert>
+    </changeSet>
 
 </databaseChangeLog>

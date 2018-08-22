@@ -1,5 +1,6 @@
 package com.revolut.money.transfer.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.DiscriminatorColumn;
@@ -20,14 +21,16 @@ public abstract class AccountOperation {
 	protected long id;
 
 	protected Date createdOn;
-	protected double amount;
+	protected BigDecimal amount;
+	protected BigDecimal amountInAccountCurrency;
 	protected String currency;
 
 	public AccountOperation() {
 	}
 
-	public AccountOperation(double amount, String currency, Date createdOn) {
+	public AccountOperation(BigDecimal amount, BigDecimal amountInAccountCurrency, String currency, Date createdOn) {
 		this.amount = amount;
+		this.amountInAccountCurrency = amountInAccountCurrency;
 		this.currency = currency;
 		this.createdOn = createdOn;
 	}
@@ -48,12 +51,20 @@ public abstract class AccountOperation {
 		this.createdOn = createdOn;
 	}
 
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
+	}
+
+	public BigDecimal getAmountInAccountCurrency() {
+		return amountInAccountCurrency;
+	}
+
+	public void setAmountInAccountCurrency(BigDecimal amountInAccountCurrency) {
+		this.amountInAccountCurrency = amountInAccountCurrency;
 	}
 
 	public String getCurrency() {
@@ -64,5 +75,5 @@ public abstract class AccountOperation {
 		this.currency = currency;
 	}
 
-	abstract double apply(double actualBalance);
+	abstract BigDecimal apply(BigDecimal actualBalance);
 }

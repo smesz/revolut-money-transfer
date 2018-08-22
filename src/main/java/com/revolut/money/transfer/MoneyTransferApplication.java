@@ -5,9 +5,13 @@ import com.revolut.money.transfer.account.rest.AccountResource;
 import com.revolut.money.transfer.account.service.AccountConverter;
 import com.revolut.money.transfer.account.service.AccountService;
 import com.revolut.money.transfer.account.service.AccountValidator;
+import com.revolut.money.transfer.account.service.MoneyOperationsExecutor;
+import com.revolut.money.transfer.currency.MoneyExchangeService;
+import com.revolut.money.transfer.currency.dao.ExchangeRateDao;
 import com.revolut.money.transfer.model.Account;
 import com.revolut.money.transfer.model.AccountOperation;
 import com.revolut.money.transfer.model.DepositOperation;
+import com.revolut.money.transfer.model.ExchangeRate;
 import com.revolut.money.transfer.model.WithdrawOperation;
 
 import io.dropwizard.Application;
@@ -22,7 +26,7 @@ public class MoneyTransferApplication extends Application<MoneyTransferConfigura
 	private static final String APPLICATION_NAME = "revolut-transfers";
 
 	private final HibernateBundle<MoneyTransferConfiguration> hibernate =
-			new HibernateBundle<MoneyTransferConfiguration>(Account.class, AccountOperation.class,
+			new HibernateBundle<MoneyTransferConfiguration>(Account.class, AccountOperation.class, ExchangeRate.class,
 					DepositOperation.class, WithdrawOperation.class) {
 				@Override
 				public DataSourceFactory getDataSourceFactory(MoneyTransferConfiguration configuration) {
@@ -57,10 +61,16 @@ public class MoneyTransferApplication extends Application<MoneyTransferConfigura
 		AccountDao accountDao = new AccountDao(hibernate.getSessionFactory());
 		AccountConverter accountConverter = new AccountConverter();
 		AccountValidator accountValidator = new AccountValidator(accountDao);
-		AccountService accountService = new AccountService(accountDao, accountConverter, accountValidator);
+		MoneyOperationsExecutor moneyOperationsExecutor = new MoneyOperationsExecutor(
+				new MoneyExchangeService(
+						new ExchangeRateDao(hibernate.getSessionFactory())
+				)
+		);
+		AccountService accountService = new AccountService(accountDao, accountConverter, accountValidator,
+				moneyOperationsExecutor);
 
 		environment.jersey().register(
-				new AccountResource(accountService, accountConverter)
+				new AccountResource(accountService)
 		);
 	}
 }
