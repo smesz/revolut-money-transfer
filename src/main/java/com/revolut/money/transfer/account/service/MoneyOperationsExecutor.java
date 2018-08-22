@@ -2,30 +2,31 @@ package com.revolut.money.transfer.account.service;
 
 import java.math.BigDecimal;
 
+import com.revolut.money.transfer.currency.ExchangeService;
 import com.revolut.money.transfer.currency.MoneyExchangeService;
 import com.revolut.money.transfer.model.account.Account;
 
 public class MoneyOperationsExecutor {
 
-	private final MoneyExchangeService moneyExchangeService;
+	private final ExchangeService exchangeRateService;
 
-	public MoneyOperationsExecutor(MoneyExchangeService moneyExchangeService) {
-		this.moneyExchangeService = moneyExchangeService;
+	public MoneyOperationsExecutor(MoneyExchangeService exchangeRateService) {
+		this.exchangeRateService = exchangeRateService;
 	}
 
 	public Builder forAccount(Account account) {
-		return new Builder(account, moneyExchangeService);
+		return new Builder(account, exchangeRateService);
 	}
 
 	public static class Builder {
 
-		private MoneyExchangeService moneyExchangeService;
+		private ExchangeService moneyExchangeService;
 		private Account account;
 		private String operation;
 		private BigDecimal amount;
 		private String currency;
 
-		Builder(Account account, MoneyExchangeService moneyExchangeService) {
+		Builder(Account account, ExchangeService moneyExchangeService) {
 			this.account = account;
 			this.moneyExchangeService = moneyExchangeService;
 		}
