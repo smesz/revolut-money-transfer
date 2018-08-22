@@ -2,7 +2,7 @@ package com.revolut.money.transfer.account.dao;
 
 import org.hibernate.SessionFactory;
 
-import com.revolut.money.transfer.model.Account;
+import com.revolut.money.transfer.model.account.Account;
 
 import io.dropwizard.hibernate.AbstractDAO;
 

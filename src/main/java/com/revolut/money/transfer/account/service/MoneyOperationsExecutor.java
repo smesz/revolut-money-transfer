@@ -3,7 +3,7 @@ package com.revolut.money.transfer.account.service;
 import java.math.BigDecimal;
 
 import com.revolut.money.transfer.currency.MoneyExchangeService;
-import com.revolut.money.transfer.model.Account;
+import com.revolut.money.transfer.model.account.Account;
 
 public class MoneyOperationsExecutor {
 

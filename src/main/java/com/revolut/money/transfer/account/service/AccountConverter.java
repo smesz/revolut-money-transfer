@@ -1,6 +1,6 @@
 package com.revolut.money.transfer.account.service;
 
-import com.revolut.money.transfer.model.Account;
+import com.revolut.money.transfer.model.account.Account;
 import com.revolut.money.transfer.model.dto.NewAccountRequest;
 import com.revolut.money.transfer.model.dto.NewAccountResponse;
 

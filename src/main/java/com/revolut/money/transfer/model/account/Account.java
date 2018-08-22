@@ -1,4 +1,4 @@
-package com.revolut.money.transfer.model;
+package com.revolut.money.transfer.model.account;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

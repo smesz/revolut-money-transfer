@@ -10,11 +10,11 @@ import com.revolut.money.transfer.account.service.AccountValidator;
 import com.revolut.money.transfer.account.service.MoneyOperationsExecutor;
 import com.revolut.money.transfer.currency.MoneyExchangeService;
 import com.revolut.money.transfer.currency.dao.ExchangeRateDao;
-import com.revolut.money.transfer.model.Account;
-import com.revolut.money.transfer.model.AccountOperation;
-import com.revolut.money.transfer.model.DepositOperation;
+import com.revolut.money.transfer.model.account.Account;
+import com.revolut.money.transfer.model.account.AccountOperation;
+import com.revolut.money.transfer.model.account.DepositOperation;
 import com.revolut.money.transfer.model.rates.ExchangeRate;
-import com.revolut.money.transfer.model.WithdrawOperation;
+import com.revolut.money.transfer.model.account.WithdrawOperation;
 
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
