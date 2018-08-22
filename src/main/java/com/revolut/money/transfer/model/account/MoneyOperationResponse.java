@@ -8,17 +8,19 @@ public class MoneyOperationResponse {
 
 	private String account;
 	private String operation;
-	private MoneyDto amount;
+	private MoneyDto money;
+	private String currentBalance;
 	private Status status;
 
 	public MoneyOperationResponse() {
 	}
 
-	public MoneyOperationResponse(String account, String operation, MoneyDto amount,
+	public MoneyOperationResponse(String account, String operation, MoneyDto money, String currentBalance,
 			Status status) {
 		this.account = account;
 		this.operation = operation;
-		this.amount = amount;
+		this.money = money;
+		this.currentBalance = currentBalance;
 		this.status = status;
 	}
 
@@ -38,12 +40,20 @@ public class MoneyOperationResponse {
 		this.operation = operation;
 	}
 
-	public MoneyDto getAmount() {
-		return amount;
+	public MoneyDto getMoney() {
+		return money;
 	}
 
-	public void setAmount(MoneyDto amount) {
-		this.amount = amount;
+	public void setMoney(MoneyDto money) {
+		this.money = money;
+	}
+
+	public String getCurrentBalance() {
+		return currentBalance;
+	}
+
+	public void setCurrentBalance(String currentBalance) {
+		this.currentBalance = currentBalance;
 	}
 
 	public Status getStatus() {

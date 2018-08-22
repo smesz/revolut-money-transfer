@@ -42,11 +42,15 @@ public class AccountService {
 				.inCurrency(request.getCurrency())
 				.execute();
 
+		return createOperationResponse(account, "deposit", request);
+	}
+
+	private MoneyOperationResponse createOperationResponse(Account account, String operation,
+			MoneyOperationRequest request) {
+
 		return new MoneyOperationResponse(
-				account.getName(),
-				"deposit",
-				new MoneyDto(request.getAmount(), request.getCurrency()),
-				Status.ok()
+				account.getName(), operation, new MoneyDto(request.getAmount(), request.getCurrency()),
+				MoneyFormatter.format(account.getBalance()), Status.ok()
 		);
 	}
 
@@ -58,12 +62,7 @@ public class AccountService {
 				.inCurrency(request.getCurrency())
 				.execute();
 
-		return new MoneyOperationResponse(
-				account.getName(),
-				"withdraw",
-				new MoneyDto(request.getAmount(), request.getCurrency()),
-				Status.ok()
-		);
+		return createOperationResponse(account, "withdraw", request);
 	}
 
 	private Account createAccountObject(NewAccountRequest request) {
