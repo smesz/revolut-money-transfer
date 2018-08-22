@@ -2,10 +2,10 @@ package com.revolut.money.transfer.account.service;
 
 import com.revolut.money.transfer.account.dao.AccountDao;
 import com.revolut.money.transfer.model.account.Account;
-import com.revolut.money.transfer.model.MoneyDto;
 import com.revolut.money.transfer.model.dto.BalanceResponse;
 import com.revolut.money.transfer.model.dto.MoneyOperationRequest;
 import com.revolut.money.transfer.model.dto.MoneyOperationResponse;
+import com.revolut.money.transfer.model.dto.MoneyOperationResponse.MoneyDto;
 import com.revolut.money.transfer.model.dto.MoneyOperationResponse.Status;
 import com.revolut.money.transfer.model.dto.NewAccountRequest;
 import com.revolut.money.transfer.model.dto.NewAccountResponse;

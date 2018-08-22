@@ -2,7 +2,6 @@ package com.revolut.money.transfer.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.revolut.money.transfer.model.MoneyDto;
 
 public class MoneyOperationResponse {
 
@@ -97,6 +96,36 @@ public class MoneyOperationResponse {
 
 		public void setDetails(String details) {
 			this.details = details;
+		}
+	}
+
+	public static class MoneyDto {
+
+		private String amount;
+		private String currency;
+
+		public MoneyDto() {
+		}
+
+		public MoneyDto(String amount, String currency) {
+			this.amount = amount;
+			this.currency = currency;
+		}
+
+		public String getAmount() {
+			return amount;
+		}
+
+		public void setAmount(String amount) {
+			this.amount = amount;
+		}
+
+		public String getCurrency() {
+			return currency;
+		}
+
+		public void setCurrency(String currency) {
+			this.currency = currency;
 		}
 	}
 }
