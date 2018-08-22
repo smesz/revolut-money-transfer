@@ -2,8 +2,8 @@ package com.revolut.money.transfer.currency.dao;
 
 import org.hibernate.SessionFactory;
 
-import com.revolut.money.transfer.model.ExchangeRate;
-import com.revolut.money.transfer.model.ExchangeRateKey;
+import com.revolut.money.transfer.model.rates.ExchangeRate;
+import com.revolut.money.transfer.model.rates.ExchangeRateKey;
 
 import io.dropwizard.hibernate.AbstractDAO;
 

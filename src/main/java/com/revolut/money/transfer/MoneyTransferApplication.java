@@ -13,7 +13,7 @@ import com.revolut.money.transfer.currency.dao.ExchangeRateDao;
 import com.revolut.money.transfer.model.Account;
 import com.revolut.money.transfer.model.AccountOperation;
 import com.revolut.money.transfer.model.DepositOperation;
-import com.revolut.money.transfer.model.ExchangeRate;
+import com.revolut.money.transfer.model.rates.ExchangeRate;
 import com.revolut.money.transfer.model.WithdrawOperation;
 
 import io.dropwizard.Application;

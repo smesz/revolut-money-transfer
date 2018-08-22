@@ -3,7 +3,7 @@ package com.revolut.money.transfer.currency;
 import java.math.BigDecimal;
 
 import com.revolut.money.transfer.currency.dao.ExchangeRateDao;
-import com.revolut.money.transfer.model.ExchangeRate;
+import com.revolut.money.transfer.model.rates.ExchangeRate;
 
 public class MoneyExchangeService implements ExchangeService {
 

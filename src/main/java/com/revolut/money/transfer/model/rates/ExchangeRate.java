@@ -1,4 +1,4 @@
-package com.revolut.money.transfer.model;
+package com.revolut.money.transfer.model.rates;
 
 import java.math.BigDecimal;
 
