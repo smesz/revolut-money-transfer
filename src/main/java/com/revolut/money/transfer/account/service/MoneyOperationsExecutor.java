@@ -2,15 +2,15 @@ package com.revolut.money.transfer.account.service;
 
 import java.math.BigDecimal;
 
-import com.revolut.money.transfer.currency.ExchangeService;
-import com.revolut.money.transfer.currency.MoneyExchangeService;
+import com.revolut.money.transfer.currency.ExchangeRateService;
+import com.revolut.money.transfer.currency.MoneyExchangeRateService;
 import com.revolut.money.transfer.model.account.Account;
 
 public class MoneyOperationsExecutor {
 
-	private final ExchangeService exchangeRateService;
+	private final ExchangeRateService exchangeRateService;
 
-	public MoneyOperationsExecutor(MoneyExchangeService exchangeRateService) {
+	public MoneyOperationsExecutor(MoneyExchangeRateService exchangeRateService) {
 		this.exchangeRateService = exchangeRateService;
 	}
 
@@ -20,15 +20,15 @@ public class MoneyOperationsExecutor {
 
 	public static class Builder {
 
-		private ExchangeService moneyExchangeService;
+		private ExchangeRateService moneyExchangeRateService;
 		private Account account;
 		private String operation;
 		private BigDecimal amount;
 		private String currency;
 
-		Builder(Account account, ExchangeService moneyExchangeService) {
+		Builder(Account account, ExchangeRateService moneyExchangeRateService) {
 			this.account = account;
-			this.moneyExchangeService = moneyExchangeService;
+			this.moneyExchangeRateService = moneyExchangeRateService;
 		}
 
 		Builder deposit(BigDecimal amount) {
@@ -60,7 +60,7 @@ public class MoneyOperationsExecutor {
 
 		private BigDecimal getExchangeRate() {
 			if (!account.getCurrency().equals(currency)) {
-				return moneyExchangeService.getExchangeRate(currency, account.getCurrency());
+				return moneyExchangeRateService.getExchangeRate(currency, account.getCurrency());
 			}
 
 			return BigDecimal.ONE;

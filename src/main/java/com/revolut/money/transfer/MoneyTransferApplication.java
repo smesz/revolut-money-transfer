@@ -8,7 +8,7 @@ import com.revolut.money.transfer.account.service.AccountConverter;
 import com.revolut.money.transfer.account.service.AccountService;
 import com.revolut.money.transfer.account.service.AccountValidator;
 import com.revolut.money.transfer.account.service.MoneyOperationsExecutor;
-import com.revolut.money.transfer.currency.MoneyExchangeService;
+import com.revolut.money.transfer.currency.MoneyExchangeRateService;
 import com.revolut.money.transfer.currency.dao.ExchangeRateDao;
 import com.revolut.money.transfer.model.account.Account;
 import com.revolut.money.transfer.model.account.AccountOperation;
@@ -64,7 +64,7 @@ public class MoneyTransferApplication extends Application<MoneyTransferConfigura
 		AccountConverter accountConverter = new AccountConverter();
 		AccountValidator accountValidator = new AccountValidator(accountDao);
 		MoneyOperationsExecutor moneyOperationsExecutor = new MoneyOperationsExecutor(
-				new MoneyExchangeService(
+				new MoneyExchangeRateService(
 						new ExchangeRateDao(hibernate.getSessionFactory())
 				)
 		);
