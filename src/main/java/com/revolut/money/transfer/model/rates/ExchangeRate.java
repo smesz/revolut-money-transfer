@@ -13,6 +13,14 @@ public class ExchangeRate {
 
 	private BigDecimal exchangeRate;
 
+	public ExchangeRate(ExchangeRateKey id, BigDecimal exchangeRate) {
+		this.id = id;
+		this.exchangeRate = exchangeRate;
+	}
+
+	public ExchangeRate() {
+	}
+
 	public ExchangeRateKey getId() {
 		return id;
 	}
