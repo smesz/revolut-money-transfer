@@ -5,6 +5,14 @@ public class MoneyOperationRequest {
 	private String amount;
 	private String currency;
 
+	public MoneyOperationRequest(String amount, String currency) {
+		this.amount = amount;
+		this.currency = currency;
+	}
+
+	public MoneyOperationRequest() {
+	}
+
 	public String getAmount() {
 		return amount;
 	}

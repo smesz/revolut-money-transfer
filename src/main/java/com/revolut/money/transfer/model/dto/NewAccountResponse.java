@@ -6,6 +6,15 @@ public class NewAccountResponse {
 	private String name;
 	private String currency;
 
+	public NewAccountResponse(long id, String name, String currency) {
+		this.id = id;
+		this.name = name;
+		this.currency = currency;
+	}
+
+	public NewAccountResponse() {
+	}
+
 	public long getId() {
 		return id;
 	}
