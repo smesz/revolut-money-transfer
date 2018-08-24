@@ -20,7 +20,7 @@ class AccountDaoTest extends Specification {
 
     def 'Should create, find and verify if account exists'() {
         when:
-        def account = dao.create(new Account(1, 'name', 'USD'))
+        def account = dao.create(new Account('name', 'USD'))
 
         then:
         assertAccount(account, 1, 'name', 'USD')
@@ -48,7 +48,7 @@ class AccountDaoTest extends Specification {
 
     def 'Should return account if exists and no exception is thrown'() {
         given:
-        dao.create(new Account(1, 'name', 'USD'))
+        dao.create(new Account('name', 'USD'))
 
         when:
         dao.getOrThrowException(1)
@@ -59,9 +59,9 @@ class AccountDaoTest extends Specification {
 
     def 'Should indicate if account exists in db'() {
         when:
-        dao.create(new Account(1, 'name', 'USD'))
-        dao.create(new Account(2, 'name', 'EUR'))
-        dao.create(new Account(3, 'name', 'PLN'))
+        dao.create(new Account('name', 'USD'))
+        dao.create(new Account('name', 'EUR'))
+        dao.create(new Account('name', 'PLN'))
 
         then:
         dao.exists(1)
@@ -78,5 +78,4 @@ class AccountDaoTest extends Specification {
         assert account.name == name
         assert account.currency == currency
     }
-
 }

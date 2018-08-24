@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -20,6 +22,7 @@ import com.revolut.money.transfer.account.exception.NotEnoughMoneyException;
 public class Account {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private long id;
 
 	private String currency;
@@ -32,8 +35,7 @@ public class Account {
 	public Account() {
 	}
 
-	public Account(long id, String name, String currency) {
-		this.id = id;
+	public Account(String name, String currency) {
 		this.name = name;
 		this.currency = currency;
 		this.accountOperations = new ArrayList<>();

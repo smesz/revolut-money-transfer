@@ -8,7 +8,6 @@ public class AccountConverter {
 
 	public Account fromRequest(NewAccountRequest request) {
 		return new Account(
-				request.getId(),
 				request.getName(),
 				request.getCurrency()
 		);

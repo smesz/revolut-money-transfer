@@ -58,4 +58,17 @@ public class AccountResource {
 				accountService.getBalance(accountId)
 		).build();
 	}
+
+	@POST
+	@Path("/{fromAccount}/transfer/{toAccount}")
+	@UnitOfWork
+	public Response transfer(
+			@PathParam("fromAccount") long fromAccountId,
+			@PathParam("toAccount") long toAccountId,
+			MoneyOperationRequest request) {
+//		return Response.ok(
+//				accountService.transferMoney(fromAccountId, toAccountId, request)
+//		).build();
+		return null;
+	}
 }

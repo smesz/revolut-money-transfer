@@ -2,25 +2,15 @@ package com.revolut.money.transfer.model.dto;
 
 public class NewAccountRequest {
 
-	private long id;
 	private String name;
 	private String currency;
 
-	public NewAccountRequest(long id, String name, String currency) {
-		this.id = id;
+	public NewAccountRequest(String name, String currency) {
 		this.name = name;
 		this.currency = currency;
 	}
 
 	public NewAccountRequest() {
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	public String getName() {

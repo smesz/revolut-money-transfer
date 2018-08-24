@@ -11,17 +11,20 @@ class AccountConverterTest extends Specification {
 
     def 'Should convert request to Account instance'() {
         when:
-        def account = converter.fromRequest(new NewAccountRequest(1, 'account', 'USD'))
+        def account = converter.fromRequest(new NewAccountRequest('account', 'USD'))
 
         then:
-        account.id == 1
         account.name == 'account'
         account.currency == 'USD'
     }
 
     def 'Should convert Account object to response'() {
+        given:
+        def account = new Account('name', 'EUR')
+        account.id = 1
+
         when:
-        def response = converter.toResponse(new Account(1, 'name', 'EUR'))
+        def response = converter.toResponse(account)
 
         then:
         response.id == 1

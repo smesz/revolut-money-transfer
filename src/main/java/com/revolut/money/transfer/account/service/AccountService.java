@@ -18,22 +18,18 @@ public class AccountService {
 
 	private final AccountDao accountDao;
 	private final AccountConverter converter;
-	private final AccountValidator validator;
 	private final DepositFactory depositFactory;
 	private final WithdrawFactory withdrawFactory;
 
-	public AccountService(AccountDao accountDao, AccountConverter converter, AccountValidator validator,
-			DepositFactory depositFactory, WithdrawFactory withdrawFactory) {
+	public AccountService(AccountDao accountDao, AccountConverter converter, DepositFactory depositFactory,
+			WithdrawFactory withdrawFactory) {
 		this.accountDao = accountDao;
 		this.converter = converter;
-		this.validator = validator;
 		this.depositFactory = depositFactory;
 		this.withdrawFactory = withdrawFactory;
 	}
 
 	public NewAccountResponse createAccount(NewAccountRequest request) {
-		validator.checkForAccountCreation(request);
-
 		Account account = accountDao.create(createAccountObject(request));
 		return converter.toResponse(account);
 	}

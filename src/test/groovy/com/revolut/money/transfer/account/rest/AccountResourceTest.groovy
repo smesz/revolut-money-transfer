@@ -27,22 +27,22 @@ class AccountResourceTest extends Specification {
         RULE.application.run()
     }
 
-    def 'Should create account with success'() {
+    def 'Should create account 1 with success - USD'() {
         when:
-        def response = createAccount('account/create/input/account_create_ok.json')
+        def response = createAccount('account/create/input/account_create_ok_1.json')
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/create/output/account_create_ok.json'))
+        assertResponse(response.readEntity(String), jsonFromFile('account/create/output/account_create_ok_1.json'))
     }
 
-    def 'Should return error response due to account already exists'() {
+    def 'Should create account 2 with success - USD'() {
         when:
-        def response = createAccount('account/create/input/account_create_error_already_exists.json')
+        def response = createAccount('account/create/input/account_create_ok_2.json')
 
         then:
-        response.status == 409
-        assertResponse(response.readEntity(String), jsonFromFile('account/create/output/account_create_error_already_exists.json'))
+        response.status == 200
+        assertResponse(response.readEntity(String), jsonFromFile('account/create/output/account_create_ok_2.json'))
     }
 
     def createAccount(String requestJsonPath) {
