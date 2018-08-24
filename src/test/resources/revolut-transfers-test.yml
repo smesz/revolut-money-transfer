@@ -1,0 +1,15 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 9088
+  adminConnectors:
+  - type: http
+    port: 9081
+
+database:
+  driverClass: org.h2.Driver
+  user: sa
+  password: sa
+  url: jdbc:h2:./target/example
+  properties:
+    hibernate.hbm2ddl.auto: create
