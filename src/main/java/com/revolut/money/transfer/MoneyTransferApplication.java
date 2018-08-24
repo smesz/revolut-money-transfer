@@ -7,14 +7,16 @@ import com.revolut.money.transfer.account.rest.AccountResource;
 import com.revolut.money.transfer.account.service.AccountConverter;
 import com.revolut.money.transfer.account.service.AccountService;
 import com.revolut.money.transfer.account.service.AccountValidator;
-import com.revolut.money.transfer.account.service.MoneyOperationsExecutor;
+import com.revolut.money.transfer.account.service.DepositFactory;
+import com.revolut.money.transfer.account.service.WithdrawFactory;
+import com.revolut.money.transfer.currency.ExchangeRateService;
 import com.revolut.money.transfer.currency.MoneyExchangeRateService;
 import com.revolut.money.transfer.currency.dao.ExchangeRateDao;
 import com.revolut.money.transfer.model.account.Account;
 import com.revolut.money.transfer.model.account.AccountOperation;
 import com.revolut.money.transfer.model.account.DepositOperation;
-import com.revolut.money.transfer.model.rates.ExchangeRate;
 import com.revolut.money.transfer.model.account.WithdrawOperation;
+import com.revolut.money.transfer.model.rates.ExchangeRate;
 
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
@@ -63,13 +65,16 @@ public class MoneyTransferApplication extends Application<MoneyTransferConfigura
 		AccountDao accountDao = new AccountDao(hibernate.getSessionFactory());
 		AccountConverter accountConverter = new AccountConverter();
 		AccountValidator accountValidator = new AccountValidator(accountDao);
-		MoneyOperationsExecutor moneyOperationsExecutor = new MoneyOperationsExecutor(
-				new MoneyExchangeRateService(
-						new ExchangeRateDao(hibernate.getSessionFactory())
-				)
+
+		ExchangeRateService exchangeRateService = new MoneyExchangeRateService(
+				new ExchangeRateDao(hibernate.getSessionFactory())
 		);
+
+		DepositFactory depositFactory = new DepositFactory(exchangeRateService);
+		WithdrawFactory withdrawFactory = new WithdrawFactory(exchangeRateService);
+
 		AccountService accountService = new AccountService(accountDao, accountConverter, accountValidator,
-				moneyOperationsExecutor);
+				depositFactory, withdrawFactory);
 
 		environment.jersey().register(new AccountResource(accountService));
 		environment.jersey().register(new AccountAlreadyExistsExceptionMapper());

@@ -3,7 +3,6 @@ package com.revolut.money.transfer.model.account;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -41,23 +40,21 @@ public class Account {
 	}
 
 	@Transient
-	public void makeDeposit(BigDecimal amount, BigDecimal amountInAccountCurrency, String currency) {
-		getAccountOperations().add(
-				new DepositOperation(amount, amountInAccountCurrency, currency, new Date())
-		);
+	public void makeDeposit(AccountOperation operation) {
+		getAccountOperations().add(operation);
 	}
 
 	@Transient
-	public void makeWithdraw(BigDecimal amount, BigDecimal amountInAccountCurrency, String currency) {
+	public void makeWithdraw(AccountOperation operation) {
+		validateWithdraw(operation.getAmountInAccountCurrency());
 
-		// check if there is enough money on account
-		if (getBalance().compareTo(amountInAccountCurrency) < 0) {
-			throw new NotEnoughMoneyException(this.getId());
+		getAccountOperations().add(operation);
+	}
+
+	private void validateWithdraw(BigDecimal moneyToWithdraw) {
+		if (getBalance().compareTo(moneyToWithdraw) < 0) {
+			throw new NotEnoughMoneyException(getId());
 		}
-
-		getAccountOperations().add(
-				new WithdrawOperation(amount, amountInAccountCurrency, currency, new Date())
-		);
 	}
 
 	@Transient

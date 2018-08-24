@@ -1,6 +1,9 @@
 package com.revolut.money.transfer.account.service;
 
+import java.math.BigDecimal;
+
 import com.revolut.money.transfer.account.dao.AccountDao;
+import com.revolut.money.transfer.account.exception.AccountNotExistsException;
 import com.revolut.money.transfer.model.account.Account;
 import com.revolut.money.transfer.model.dto.BalanceResponse;
 import com.revolut.money.transfer.model.dto.MoneyOperationRequest;
@@ -16,15 +19,16 @@ public class AccountService {
 	private final AccountDao accountDao;
 	private final AccountConverter converter;
 	private final AccountValidator validator;
-	private final MoneyOperationsExecutor moneyOperationsExecutor;
+	private final DepositFactory depositFactory;
+	private final WithdrawFactory withdrawFactory;
 
 	public AccountService(AccountDao accountDao, AccountConverter converter, AccountValidator validator,
-			MoneyOperationsExecutor moneyOperationsExecutor) {
-
+			DepositFactory depositFactory, WithdrawFactory withdrawFactory) {
 		this.accountDao = accountDao;
 		this.converter = converter;
 		this.validator = validator;
-		this.moneyOperationsExecutor = moneyOperationsExecutor;
+		this.depositFactory = depositFactory;
+		this.withdrawFactory = withdrawFactory;
 	}
 
 	public NewAccountResponse createAccount(NewAccountRequest request) {
@@ -35,34 +39,53 @@ public class AccountService {
 	}
 
 	public MoneyOperationResponse makeDeposit(long accountId, MoneyOperationRequest request) {
-		Account account = accountDao.findById(accountId);
+		Account account = null;
+		try {
+			account = accountDao.getOrThrowException(accountId);
+			BigDecimal amount = MoneyFormatter.parse(request.getAmount());
 
-		moneyOperationsExecutor.forAccount(account)
-				.deposit(MoneyFormatter.parse(request.getAmount()))
-				.inCurrency(request.getCurrency())
-				.execute();
+			account.makeDeposit(
+					depositFactory.create(amount, request.getCurrency(), account.getCurrency())
+			);
 
-		return createOperationResponse(account, "deposit", request);
+			return okResponse(account, "deposit", request);
+		} catch (AccountNotExistsException e) {
+			return errorResponse(account, "deposit", request, e.getMessage());
+		}
 	}
 
-	private MoneyOperationResponse createOperationResponse(Account account, String operation,
-			MoneyOperationRequest request) {
-
+	private MoneyOperationResponse okResponse(Account account, String operation, MoneyOperationRequest request) {
 		return new MoneyOperationResponse(
 				account.getName(), operation, new MoneyDto(request.getAmount(), request.getCurrency()),
 				MoneyFormatter.format(account.getBalance()), Status.ok()
 		);
 	}
 
+	private MoneyOperationResponse errorResponse(Account account, String operation, MoneyOperationRequest request,
+			String error) {
+
+		String accountName = account != null ? account.getName() : "";
+		String balance = account != null ? MoneyFormatter.format(account.getBalance()) : "";
+		MoneyDto money = new MoneyDto(request.getAmount(), request.getCurrency());
+
+		return new MoneyOperationResponse(accountName, operation, money, balance, Status.error(error));
+	}
+
 	public MoneyOperationResponse makeWithdraw(long accountId, MoneyOperationRequest request) {
-		Account account = accountDao.findById(accountId);
+		Account account = null;
+		try {
+			account = accountDao.getOrThrowException(accountId);
+			BigDecimal amount = MoneyFormatter.parse(request.getAmount());
 
-		moneyOperationsExecutor.forAccount(account)
-				.withdraw(MoneyFormatter.parse(request.getAmount()))
-				.inCurrency(request.getCurrency())
-				.execute();
+			account.makeWithdraw(
+					withdrawFactory.create(amount, request.getCurrency(), account.getCurrency())
+			);
 
-		return createOperationResponse(account, "withdraw", request);
+			return okResponse(account, "withdraw", request);
+
+		} catch (Exception e) {
+			return errorResponse(account, "withdraw", request, e.getMessage());
+		}
 	}
 
 	private Account createAccountObject(NewAccountRequest request) {
@@ -70,7 +93,7 @@ public class AccountService {
 	}
 
 	public BalanceResponse getBalance(long accountId) {
-		Account account = accountDao.findById(accountId);
+		Account account = accountDao.getOrThrowException(accountId);
 
 		return new BalanceResponse(account.getName(), String.valueOf(account.getBalance()), account.getCurrency());
 	}

@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class MoneyOperationResponse {
 
+	@JsonInclude(value = Include.NON_EMPTY)
 	private String account;
 	private String operation;
 	private MoneyDto money;
+
+	@JsonInclude(value = Include.NON_EMPTY)
 	private String currentBalance;
 	private Status status;
 
@@ -72,6 +75,10 @@ public class MoneyOperationResponse {
 
 		public static Status ok() {
 			return new Status("OK", "");
+		}
+
+		public static Status error(String details) {
+			return new Status("ERROR", details);
 		}
 
 		public Status() {

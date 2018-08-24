@@ -1,5 +1,6 @@
 package com.revolut.money.transfer.account.dao
 
+import com.revolut.money.transfer.account.exception.AccountNotExistsException
 import com.revolut.money.transfer.model.account.Account
 import com.revolut.money.transfer.model.account.AccountOperation
 import io.dropwizard.testing.junit.DAOTestRule
@@ -35,6 +36,25 @@ class AccountDaoTest extends Specification {
 
         then:
         exists
+    }
+
+    def 'Should throw exception if account is not found'() {
+        when:
+        dao.getOrThrowException(1)
+
+        then:
+        thrown(AccountNotExistsException)
+    }
+
+    def 'Should return account if exists and no exception is thrown'() {
+        given:
+        dao.create(new Account(1, 'name', 'USD'))
+
+        when:
+        dao.getOrThrowException(1)
+
+        then:
+        noExceptionThrown()
     }
 
     def 'Should indicate if account exists in db'() {
