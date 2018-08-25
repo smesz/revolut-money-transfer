@@ -111,6 +111,15 @@ class AccountResourceTest extends Specification {
         assertResponse(response.readEntity(String), jsonFromFile('account/balance/output/account_balance_ok_2.json'))
     }
 
+    def 'Should transfer 200 USD from account 1 to 2'() {
+        when:
+        def response = transfer(1, 2, 'account/transfer/input/account_transfer_ok_1_2.json')
+
+        then:
+        response.status == 200
+        assertResponse(response.readEntity(String), jsonFromFile('account/transfer/output/account_transfer_ok_1_2.json'))
+    }
+
     def createAccount(String requestJsonPath) {
         RULE.client()
                 .target("http://localhost:${RULE.getLocalPort()}/account")
@@ -132,6 +141,13 @@ class AccountResourceTest extends Specification {
                 .post(Entity.json(jsonFromFile(requestJsonPath)))
     }
 
+    def transfer(accountId1, accountId2, String requestJsonPath) {
+        RULE.client()
+                .target("http://localhost:${RULE.getLocalPort()}/account/${accountId1}/transfer/${accountId2}")
+                .request()
+                .post(Entity.json(jsonFromFile(requestJsonPath)))
+    }
+
     def balance(accountId) {
         RULE.client()
                 .target("http://localhost:${RULE.getLocalPort()}/account/${accountId}/balance")
@@ -139,7 +155,7 @@ class AccountResourceTest extends Specification {
                 .get()
     }
 
-    def addExchangeRate(fromCurrency, toCurrency, rate) {
+    def addExchangeRate(String fromCurrency, String toCurrency, String rate) {
         RULE.client()
                 .target("http://localhost:${RULE.getLocalPort()}/exchangerate")
                 .request()

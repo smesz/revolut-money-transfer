@@ -1,0 +1,20 @@
+{
+  "from": {
+    "account": "savings",
+    "balance": "358.03",
+    "currency": "USD"
+  },
+  "to": {
+    "account": "savings_another",
+    "balance": "200.00",
+    "currency": "USD"
+  },
+  "status": {
+    "code": "OK",
+    "operation": "transfer",
+    "transfer": {
+      "amount": "200.00",
+      "currency": "USD"
+    }
+  }
+}

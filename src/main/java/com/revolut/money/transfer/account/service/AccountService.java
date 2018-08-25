@@ -11,6 +11,7 @@ import com.revolut.money.transfer.model.dto.MoneyOperationResponse.MoneyDto;
 import com.revolut.money.transfer.model.dto.MoneyOperationResponse.Status;
 import com.revolut.money.transfer.model.dto.NewAccountRequest;
 import com.revolut.money.transfer.model.dto.NewAccountResponse;
+import com.revolut.money.transfer.model.dto.TransferResponse;
 import com.revolut.money.transfer.util.MoneyFormatter;
 
 public class AccountService {
@@ -73,5 +74,29 @@ public class AccountService {
 
 		return new BalanceResponse(account.getName(), MoneyFormatter.format(account.getBalance()),
 				account.getCurrency());
+	}
+
+	public TransferResponse transferMoney(long fromAccountId, long toAccountId, MoneyOperationRequest request) {
+		Account fromAccount = accountDao.getOrThrowException(fromAccountId);
+		Account toAccount = accountDao.getOrThrowException(toAccountId);
+
+		BigDecimal transferAmount = MoneyFormatter.parse(request.getAmount(), 2);
+		String transferCurrency = request.getCurrency();
+
+		fromAccount.makeWithdraw(
+				withdrawFactory.create(transferAmount, transferCurrency, fromAccount.getCurrency())
+		);
+
+		toAccount.makeDeposit(
+				depositFactory.create(transferAmount, transferCurrency, toAccount.getCurrency())
+		);
+
+		return new TransferResponse(
+				new BalanceResponse(fromAccount.getName(), MoneyFormatter.format(fromAccount.getBalance()),
+						fromAccount.getCurrency()),
+				new BalanceResponse(toAccount.getName(), MoneyFormatter.format(toAccount.getBalance()),
+						toAccount.getCurrency()),
+				Status.ok("transfer", new MoneyDto(request.getAmount(), request.getCurrency()))
+		);
 	}
 }

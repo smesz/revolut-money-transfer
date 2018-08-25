@@ -66,9 +66,8 @@ public class AccountResource {
 			@PathParam("fromAccount") long fromAccountId,
 			@PathParam("toAccount") long toAccountId,
 			MoneyOperationRequest request) {
-//		return Response.ok(
-//				accountService.transferMoney(fromAccountId, toAccountId, request)
-//		).build();
-		return null;
+		return Response.ok(
+				accountService.transferMoney(fromAccountId, toAccountId, request)
+		).build();
 	}
 }
