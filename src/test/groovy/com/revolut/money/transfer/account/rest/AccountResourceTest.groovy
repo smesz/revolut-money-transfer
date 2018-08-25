@@ -120,6 +120,29 @@ class AccountResourceTest extends Specification {
         assertResponse(response.readEntity(String), jsonFromFile('account/transfer/output/account_transfer_ok_1_2.json'))
     }
 
+    def 'Should fail to transfer 10000 EUR from account 2 to 1'() {
+        when:
+        def response = transfer(2, 1, 'account/transfer/input/account_transfer_error_2_1.json')
+
+        then:
+        response.status == 406
+        assertResponse(response.readEntity(String), jsonFromFile('account/transfer/output/account_transfer_error_2_1.json'))
+
+        when: 'check the balance on account 1'
+        response = balance(1)
+
+        then:
+        response.status == 200
+        assertResponse(response.readEntity(String), jsonFromFile('account/transfer/output/account_balance_after_error_1.json'))
+
+        when: 'check the balance on account 2'
+        response = balance(2)
+
+        then:
+        response.status == 200
+        assertResponse(response.readEntity(String), jsonFromFile('account/transfer/output/account_balance_after_error_2.json'))
+    }
+
     def createAccount(String requestJsonPath) {
         RULE.client()
                 .target("http://localhost:${RULE.getLocalPort()}/account")
