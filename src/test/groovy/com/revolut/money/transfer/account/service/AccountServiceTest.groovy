@@ -2,6 +2,7 @@ package com.revolut.money.transfer.account.service
 
 import com.revolut.money.transfer.account.dao.AccountDao
 import com.revolut.money.transfer.account.exception.AccountNotExistsException
+import com.revolut.money.transfer.account.exception.NotEnoughMoneyException
 import com.revolut.money.transfer.model.account.Account
 import com.revolut.money.transfer.model.account.DepositOperation
 import com.revolut.money.transfer.model.account.WithdrawOperation
@@ -56,75 +57,58 @@ class AccountServiceTest extends Specification {
 
         and:
         response.account == 'name'
-        response.operation == 'deposit'
         response.currentBalance == '300.50'
-        response.money.amount == '300.50'
-        response.money.currency == 'USD'
+        response.status.operation == 'deposit'
+        response.status.transfer.amount == '300.50'
+        response.status.transfer.currency == 'USD'
         response.status.code == 'OK'
     }
 
-    def 'Should return error when making deposit fails - no account'() {
-        given:
-        def request = new MoneyOperationRequest('300.50', 'USD')
-
+    def 'Should throw exception when trying to deposit money on non-existing account'() {
         when:
-        def response = service.makeDeposit(2, request)
+        service.makeDeposit(2, new MoneyOperationRequest('300.50', 'USD'))
 
         then:
-        0 * depositFactory._
-
-        and:
-        response.account == ''
-        response.operation == 'deposit'
-        response.currentBalance == ''
-        response.money.amount == '300.50'
-        response.money.currency == 'USD'
-        response.status.code == 'ERROR'
+        thrown(AccountNotExistsException)
     }
 
     def 'Should make a withdraw from the account'() {
-        given:
+        setup:
         account.accountOperations << new DepositOperation(1000.0, 1000.0, 'USD', new Date())
 
-        def request = new MoneyOperationRequest('300.50', 'USD')
-
         when:
-        def response = service.makeWithdraw(1, request)
+        def response = service.makeWithdraw(1, new MoneyOperationRequest('300.50', 'USD'))
 
         then:
         1 * withdrawFactory.create(300.50, 'USD', 'USD') >> new WithdrawOperation(300.50, 300.50, 'USD', new Date())
 
         and:
         response.account == 'name'
-        response.operation == 'withdraw'
         response.currentBalance == '699.50'
-        response.money.amount == '300.50'
-        response.money.currency == 'USD'
+        response.status.operation == 'withdraw'
+        response.status.transfer.amount == '300.50'
+        response.status.transfer.currency == 'USD'
         response.status.code == 'OK'
     }
 
-    def 'Withdraw should fail due to not enough money'() {
-        when:
+    def 'Withdraw throw exception when there is no money to withdraw from an account'() {
+        setup:
         account.makeDeposit(new DepositOperation(1000.0, 1000.0, 'USD', new Date()))
+
+        when:
         def balance = account.getBalance()
 
         then:
         balance == 1000.0
 
         when:
-        def response = service.makeWithdraw(1, new MoneyOperationRequest('1100.0', 'USD'))
+        service.makeWithdraw(1, new MoneyOperationRequest('1100.0', 'USD'))
 
         then:
         1 * withdrawFactory.create(1100.0, 'USD', 'USD') >> new WithdrawOperation(1100.0, 1100.0, 'USD', new Date())
 
         and:
-        response.account == 'name'
-        response.operation == 'withdraw'
-        response.currentBalance == '1000.00'
-        response.money.amount == '1100.0'
-        response.money.currency == 'USD'
-        response.status.code == 'ERROR'
-        response.status.details == "Not enough money on account '1'"
+        thrown(NotEnoughMoneyException)
     }
 
     def 'Should get balance of the account'() {

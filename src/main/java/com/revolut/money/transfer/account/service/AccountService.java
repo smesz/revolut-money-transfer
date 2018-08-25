@@ -3,7 +3,6 @@ package com.revolut.money.transfer.account.service;
 import java.math.BigDecimal;
 
 import com.revolut.money.transfer.account.dao.AccountDao;
-import com.revolut.money.transfer.account.exception.AccountNotExistsException;
 import com.revolut.money.transfer.model.account.Account;
 import com.revolut.money.transfer.model.dto.BalanceResponse;
 import com.revolut.money.transfer.model.dto.MoneyOperationRequest;
@@ -35,19 +34,15 @@ public class AccountService {
 	}
 
 	public MoneyOperationResponse makeDeposit(long accountId, MoneyOperationRequest request) {
-		Account account = null;
-		try {
-			account = accountDao.getOrThrowException(accountId);
-			BigDecimal amount = MoneyFormatter.parse(request.getAmount());
 
-			account.makeDeposit(
-					depositFactory.create(amount, request.getCurrency(), account.getCurrency())
-			);
+		Account account = accountDao.getOrThrowException(accountId);
+		BigDecimal amount = MoneyFormatter.parse(request.getAmount());
 
-			return okResponse(account, "deposit", request);
-		} catch (AccountNotExistsException e) {
-			return errorResponse(account, "deposit", request, e.getMessage());
-		}
+		account.makeDeposit(
+				depositFactory.create(amount, request.getCurrency(), account.getCurrency())
+		);
+
+		return okResponse(account, "deposit", request);
 	}
 
 	private MoneyOperationResponse okResponse(Account account, String operation, MoneyOperationRequest request) {
@@ -58,31 +53,15 @@ public class AccountService {
 		);
 	}
 
-	private MoneyOperationResponse errorResponse(Account account, String operation, MoneyOperationRequest request,
-			String error) {
-
-		String accountName = account != null ? account.getName() : "";
-		String balance = account != null ? MoneyFormatter.format(account.getBalance()) : "";
-		MoneyDto money = new MoneyDto(request.getAmount(), request.getCurrency());
-
-		return new MoneyOperationResponse(accountName, balance, Status.error(operation, money, error));
-	}
-
 	public MoneyOperationResponse makeWithdraw(long accountId, MoneyOperationRequest request) {
-		Account account = null;
-		try {
-			account = accountDao.getOrThrowException(accountId);
-			BigDecimal amount = MoneyFormatter.parse(request.getAmount());
+		Account account = accountDao.getOrThrowException(accountId);
+		BigDecimal amount = MoneyFormatter.parse(request.getAmount());
 
-			account.makeWithdraw(
-					withdrawFactory.create(amount, request.getCurrency(), account.getCurrency())
-			);
+		account.makeWithdraw(
+				withdrawFactory.create(amount, request.getCurrency(), account.getCurrency())
+		);
 
-			return okResponse(account, "withdraw", request);
-
-		} catch (Exception e) {
-			return errorResponse(account, "withdraw", request, e.getMessage());
-		}
+		return okResponse(account, "withdraw", request);
 	}
 
 	private Account createAccountObject(NewAccountRequest request) {

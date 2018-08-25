@@ -1,6 +1,7 @@
 package com.revolut.money.transfer;
 
 import com.revolut.money.transfer.account.dao.AccountDao;
+import com.revolut.money.transfer.account.exception.mappers.AccountNotExistsExceptionMapper;
 import com.revolut.money.transfer.account.exception.mappers.NotEnoughMoneyExceptionMapper;
 import com.revolut.money.transfer.account.rest.AccountResource;
 import com.revolut.money.transfer.account.service.AccountConverter;
@@ -74,6 +75,7 @@ public class MoneyTransferApplication extends Application<MoneyTransferConfigura
 				new AccountService(accountDao, accountConverter, depositFactory, withdrawFactory);
 
 		environment.jersey().register(new AccountResource(accountService));
+		environment.jersey().register(new AccountNotExistsExceptionMapper());
 		environment.jersey().register(new NotEnoughMoneyExceptionMapper());
 
 		/*

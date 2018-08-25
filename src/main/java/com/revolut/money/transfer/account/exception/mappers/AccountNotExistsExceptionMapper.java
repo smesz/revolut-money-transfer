@@ -6,14 +6,15 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 
 import com.revolut.money.transfer.account.exception.AccountNotExistsException;
+import com.revolut.money.transfer.model.GeneralError;
 
 public class AccountNotExistsExceptionMapper implements ExceptionMapper<AccountNotExistsException> {
 
 	@Override
 	public Response toResponse(AccountNotExistsException e) {
 		return Response.status(Status.NOT_FOUND)
-				.entity(e.getMessage())
-				.type(MediaType.TEXT_PLAIN_TYPE)
+				.entity(new GeneralError(e.getMessage()))
+				.type(MediaType.APPLICATION_JSON_TYPE)
 				.build();
 	}
 }
