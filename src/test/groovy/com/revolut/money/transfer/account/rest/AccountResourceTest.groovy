@@ -93,6 +93,24 @@ class AccountResourceTest extends Specification {
         assertResponse(response.readEntity(String), jsonFromFile('account/withdraw/output/account_withdraw_error_2.json'))
     }
 
+    def 'Should get balance for account 1'() {
+        when:
+        def response = balance(1)
+
+        then:
+        response.status == 200
+        assertResponse(response.readEntity(String), jsonFromFile('account/balance/output/account_balance_ok_1.json'))
+    }
+
+    def 'Should get balance for account 2'() {
+        when:
+        def response = balance(2)
+
+        then:
+        response.status == 200
+        assertResponse(response.readEntity(String), jsonFromFile('account/balance/output/account_balance_ok_2.json'))
+    }
+
     def createAccount(String requestJsonPath) {
         RULE.client()
                 .target("http://localhost:${RULE.getLocalPort()}/account")
@@ -112,6 +130,13 @@ class AccountResourceTest extends Specification {
                 .target("http://localhost:${RULE.getLocalPort()}/account/${accountId}/withdraw")
                 .request()
                 .post(Entity.json(jsonFromFile(requestJsonPath)))
+    }
+
+    def balance(accountId) {
+        RULE.client()
+                .target("http://localhost:${RULE.getLocalPort()}/account/${accountId}/balance")
+                .request()
+                .get()
     }
 
     def addExchangeRate(fromCurrency, toCurrency, rate) {

@@ -17,6 +17,7 @@ class MoneyFormatterTest extends Specification {
         678.3456   | '678.34'
         10.3456789 | '10.34'
         1000.0     | '1000.00'
+        0.0        | '0.00'
     }
 
     @Unroll

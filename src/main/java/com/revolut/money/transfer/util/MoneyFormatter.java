@@ -10,7 +10,7 @@ public class MoneyFormatter {
 
 	public static final int MONEY_SCALE = 5;
 	private static final DecimalFormat DECIMAL_FORMAT =
-			new DecimalFormat("###.00", new DecimalFormatSymbols(Locale.ENGLISH));
+			new DecimalFormat("##0.00", new DecimalFormatSymbols(Locale.ENGLISH));
 
 	static {
 		DECIMAL_FORMAT.setRoundingMode(RoundingMode.DOWN);

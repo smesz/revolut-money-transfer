@@ -71,6 +71,7 @@ public class AccountService {
 	public BalanceResponse getBalance(long accountId) {
 		Account account = accountDao.getOrThrowException(accountId);
 
-		return new BalanceResponse(account.getName(), String.valueOf(account.getBalance()), account.getCurrency());
+		return new BalanceResponse(account.getName(), MoneyFormatter.format(account.getBalance()),
+				account.getCurrency());
 	}
 }
