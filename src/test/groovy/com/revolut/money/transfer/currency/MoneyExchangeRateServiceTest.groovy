@@ -12,7 +12,7 @@ class MoneyExchangeRateServiceTest extends Specification {
     def dao = Mock(ExchangeRateDao) {
         get('USD', 'EUR') >> new ExchangeRate(new ExchangeRateKey('USD', 'EUR'), 1.55)
         get('PLN', 'EUR') >> new ExchangeRate(new ExchangeRateKey('PLN', 'EUR'), 4.3215)
-        get('PLN', 'USD') >> new ExchangeRate(new ExchangeRateKey('PLN', 'EUR'), 3.56789)
+        get('PLN', 'USD') >> new ExchangeRate(new ExchangeRateKey('PLN', 'USD'), 3.56789)
     }
 
     @Subject exchangeRateService = new MoneyExchangeRateService(dao)
