@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 
 import com.revolut.money.transfer.currency.dao.ExchangeRateDao;
 import com.revolut.money.transfer.model.rates.ExchangeRate;
-import com.revolut.money.transfer.util.MoneyFormatter;
 
 public class MoneyExchangeRateService implements ExchangeRateService {
 
@@ -29,7 +28,7 @@ public class MoneyExchangeRateService implements ExchangeRateService {
 	public BigDecimal convertMoneyByExchangeRate(BigDecimal amount, String fromCurrency, String toCurrency) {
 		BigDecimal exchangeRate = getExchangeRate(fromCurrency, toCurrency);
 
-		return amount.multiply(exchangeRate).setScale(MoneyFormatter.MONEY_SCALE, RoundingMode.DOWN);
+		return amount.multiply(exchangeRate).setScale(2, RoundingMode.DOWN);
 	}
 
 	private boolean differentCurrencies(String fromCurrency, String toCurrency) {

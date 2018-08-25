@@ -37,6 +37,6 @@ class MoneyExchangeRateServiceTest extends Specification {
         amount | from  | to    || expected
         100.0  | 'USD' | 'EUR' || 155.0
         100.0  | 'PLN' | 'EUR' || 432.15
-        777.0  | 'PLN' | 'USD' || 2772.25053
+        777.0  | 'PLN' | 'USD' || 2772.25
     }
 }
