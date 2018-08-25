@@ -12,6 +12,7 @@ import spock.lang.Specification
 import spock.lang.Stepwise
 
 import javax.ws.rs.client.Entity
+import javax.ws.rs.core.Response
 
 @Stepwise
 class AccountResourceTest extends Specification {
@@ -36,7 +37,7 @@ class AccountResourceTest extends Specification {
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/create/output/account_create_ok_1.json'))
+        assertResponse(response, 'account/create/output/account_create_ok_1.json')
     }
 
     def 'Should create account 2 with success - USD'() {
@@ -45,34 +46,34 @@ class AccountResourceTest extends Specification {
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/create/output/account_create_ok_2.json'))
+        assertResponse(response, 'account/create/output/account_create_ok_2.json')
     }
 
     def 'Should make deposit on account 1 with 500.10 USD'() {
         when:
-        def response = makeDeposit(1, 'account/deposit/input/account_deposit_ok_1.json')
+        def response = deposit(1, 'account/deposit/input/account_deposit_ok_1.json')
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/deposit/output/account_deposit_ok_1.json'))
+        assertResponse(response, 'account/deposit/output/account_deposit_ok_1.json')
     }
 
     def 'Should make another deposit on account 1 with 200 EUR'() {
         when: '200 EUR = 231,748 USD'
-        def response = makeDeposit(1, 'account/deposit/input/account_deposit_ok_1_eur.json')
+        def response = deposit(1, 'account/deposit/input/account_deposit_ok_1_eur.json')
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/deposit/output/account_deposit_ok_1_eur.json'))
+        assertResponse(response, 'account/deposit/output/account_deposit_ok_1_eur.json')
     }
 
     def 'Should fail to deposit money on non-existing account'() {
         when:
-        def response = makeDeposit(12, 'account/deposit/input/account_deposit_error_12.json')
+        def response = deposit(12, 'account/deposit/input/account_deposit_error_12.json')
 
         then:
         response.status == 404
-        assertResponse(response.readEntity(String), jsonFromFile('account/deposit/output/account_deposit_error_12.json'))
+        assertResponse(response, 'account/deposit/output/account_deposit_error_12.json')
     }
 
     def 'Should withdraw 150 EUR from account 1'() {
@@ -81,7 +82,7 @@ class AccountResourceTest extends Specification {
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/withdraw/output/account_withdraw_ok_1.json'))
+        assertResponse(response, 'account/withdraw/output/account_withdraw_ok_1.json')
     }
 
     def 'Should fail with withdraw 150 USD from account 2 as it is empty'() {
@@ -90,7 +91,7 @@ class AccountResourceTest extends Specification {
 
         then:
         response.status == 406
-        assertResponse(response.readEntity(String), jsonFromFile('account/withdraw/output/account_withdraw_error_2.json'))
+        assertResponse(response, 'account/withdraw/output/account_withdraw_error_2.json')
     }
 
     def 'Should get balance for account 1'() {
@@ -99,7 +100,7 @@ class AccountResourceTest extends Specification {
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/balance/output/account_balance_ok_1.json'))
+        assertResponse(response, 'account/balance/output/account_balance_ok_1.json')
     }
 
     def 'Should get balance for account 2'() {
@@ -108,7 +109,7 @@ class AccountResourceTest extends Specification {
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/balance/output/account_balance_ok_2.json'))
+        assertResponse(response, 'account/balance/output/account_balance_ok_2.json')
     }
 
     def 'Should transfer 200 USD from account 1 to 2'() {
@@ -117,7 +118,7 @@ class AccountResourceTest extends Specification {
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/transfer/output/account_transfer_ok_1_2.json'))
+        assertResponse(response, 'account/transfer/output/account_transfer_ok_1_2.json')
     }
 
     def 'Should fail to transfer 10000 EUR from account 2 to 1'() {
@@ -126,21 +127,30 @@ class AccountResourceTest extends Specification {
 
         then:
         response.status == 406
-        assertResponse(response.readEntity(String), jsonFromFile('account/transfer/output/account_transfer_error_2_1.json'))
+        assertResponse(response, 'account/transfer/output/account_transfer_error_2_1.json')
 
         when: 'check the balance on account 1'
         response = balance(1)
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/transfer/output/account_balance_after_error_1.json'))
+        assertResponse(response, 'account/transfer/output/account_balance_after_error_1.json')
 
         when: 'check the balance on account 2'
         response = balance(2)
 
         then:
         response.status == 200
-        assertResponse(response.readEntity(String), jsonFromFile('account/transfer/output/account_balance_after_error_2.json'))
+        assertResponse(response, 'account/transfer/output/account_balance_after_error_2.json')
+    }
+
+    def 'Should fail to transfer money when account is not in the system'() {
+        when:
+        def response = transfer(1, 10, 'account/transfer/input/account_transfer_error_1_10.json')
+
+        then:
+        response.status == 404
+        assertResponse(response, 'account/transfer/output/account_transfer_error_1_10.json')
     }
 
     def createAccount(String requestJsonPath) {
@@ -150,7 +160,7 @@ class AccountResourceTest extends Specification {
                 .post(Entity.json(jsonFromFile(requestJsonPath)))
     }
 
-    def makeDeposit(accountId, String requestJsonPath) {
+    def deposit(accountId, String requestJsonPath) {
         RULE.client()
                 .target("http://localhost:${RULE.getLocalPort()}/account/${accountId}/deposit")
                 .request()
@@ -191,7 +201,10 @@ class AccountResourceTest extends Specification {
                 .toString()
     }
 
-    void assertResponse(String result, String expected) {
+    void assertResponse(Response response, String pathToExpectedJson) {
+        def result = response.readEntity(String)
+        def expected = jsonFromFile(pathToExpectedJson)
+
         assert jsonSlurper.parseText(result) == jsonSlurper.parseText(expected)
     }
 }
