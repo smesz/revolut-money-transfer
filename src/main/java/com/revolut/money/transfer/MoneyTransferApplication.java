@@ -10,6 +10,7 @@ import com.revolut.money.transfer.account.service.WithdrawFactory;
 import com.revolut.money.transfer.currency.ExchangeRateService;
 import com.revolut.money.transfer.currency.MoneyExchangeRateService;
 import com.revolut.money.transfer.currency.dao.ExchangeRateDao;
+import com.revolut.money.transfer.currency.rest.ExchangeRateResource;
 import com.revolut.money.transfer.model.account.Account;
 import com.revolut.money.transfer.model.account.AccountOperation;
 import com.revolut.money.transfer.model.account.DepositOperation;
@@ -63,9 +64,8 @@ public class MoneyTransferApplication extends Application<MoneyTransferConfigura
 		AccountDao accountDao = new AccountDao(hibernate.getSessionFactory());
 		AccountConverter accountConverter = new AccountConverter();
 
-		ExchangeRateService exchangeRateService = new MoneyExchangeRateService(
-				new ExchangeRateDao(hibernate.getSessionFactory())
-		);
+		ExchangeRateDao exchangeRateDao = new ExchangeRateDao(hibernate.getSessionFactory());
+		ExchangeRateService exchangeRateService = new MoneyExchangeRateService(exchangeRateDao);
 
 		DepositFactory depositFactory = new DepositFactory(exchangeRateService);
 		WithdrawFactory withdrawFactory = new WithdrawFactory(exchangeRateService);
@@ -75,5 +75,11 @@ public class MoneyTransferApplication extends Application<MoneyTransferConfigura
 
 		environment.jersey().register(new AccountResource(accountService));
 		environment.jersey().register(new NotEnoughMoneyExceptionMapper());
+
+		/*
+		 * EXCHANGE RATE LOGIC
+		 */
+
+		environment.jersey().register(new ExchangeRateResource(exchangeRateDao));
 	}
 }

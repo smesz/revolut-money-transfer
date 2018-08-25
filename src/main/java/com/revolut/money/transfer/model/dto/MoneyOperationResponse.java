@@ -7,8 +7,6 @@ public class MoneyOperationResponse {
 
 	@JsonInclude(value = Include.NON_EMPTY)
 	private String account;
-	private String operation;
-	private MoneyDto money;
 
 	@JsonInclude(value = Include.NON_EMPTY)
 	private String currentBalance;
@@ -17,11 +15,8 @@ public class MoneyOperationResponse {
 	public MoneyOperationResponse() {
 	}
 
-	public MoneyOperationResponse(String account, String operation, MoneyDto money, String currentBalance,
-			Status status) {
+	public MoneyOperationResponse(String account, String currentBalance, Status status) {
 		this.account = account;
-		this.operation = operation;
-		this.money = money;
 		this.currentBalance = currentBalance;
 		this.status = status;
 	}
@@ -32,22 +27,6 @@ public class MoneyOperationResponse {
 
 	public void setAccount(String account) {
 		this.account = account;
-	}
-
-	public String getOperation() {
-		return operation;
-	}
-
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
-
-	public MoneyDto getMoney() {
-		return money;
-	}
-
-	public void setMoney(MoneyDto money) {
-		this.money = money;
 	}
 
 	public String getCurrentBalance() {
@@ -69,24 +48,44 @@ public class MoneyOperationResponse {
 	public static class Status {
 
 		private String code;
+		private String operation;
+		private MoneyDto transfer;
 
 		@JsonInclude(value = Include.NON_EMPTY)
 		private String details;
 
-		public static Status ok() {
-			return new Status("OK", "");
+		public static Status ok(String operation, MoneyDto transfer) {
+			return new Status(operation, transfer, "OK", "");
 		}
 
-		public static Status error(String details) {
-			return new Status("ERROR", details);
+		public static Status error(String operation, MoneyDto transfer, String details) {
+			return new Status(operation, transfer, "ERROR", details);
 		}
 
 		public Status() {
 		}
 
-		public Status(String code, String details) {
+		public Status(String operation, MoneyDto transfer, String code, String details) {
+			this.operation = operation;
+			this.transfer = transfer;
 			this.code = code;
 			this.details = details;
+		}
+
+		public String getOperation() {
+			return operation;
+		}
+
+		public void setOperation(String operation) {
+			this.operation = operation;
+		}
+
+		public MoneyDto getTransfer() {
+			return transfer;
+		}
+
+		public void setTransfer(MoneyDto transfer) {
+			this.transfer = transfer;
 		}
 
 		public String getCode() {

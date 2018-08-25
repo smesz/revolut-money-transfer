@@ -52,8 +52,9 @@ public class AccountService {
 
 	private MoneyOperationResponse okResponse(Account account, String operation, MoneyOperationRequest request) {
 		return new MoneyOperationResponse(
-				account.getName(), operation, new MoneyDto(request.getAmount(), request.getCurrency()),
-				MoneyFormatter.format(account.getBalance()), Status.ok()
+				account.getName(),
+				MoneyFormatter.format(account.getBalance()),
+				Status.ok(operation, new MoneyDto(request.getAmount(), request.getCurrency()))
 		);
 	}
 
@@ -64,7 +65,7 @@ public class AccountService {
 		String balance = account != null ? MoneyFormatter.format(account.getBalance()) : "";
 		MoneyDto money = new MoneyDto(request.getAmount(), request.getCurrency());
 
-		return new MoneyOperationResponse(accountName, operation, money, balance, Status.error(error));
+		return new MoneyOperationResponse(accountName, balance, Status.error(operation, money, error));
 	}
 
 	public MoneyOperationResponse makeWithdraw(long accountId, MoneyOperationRequest request) {

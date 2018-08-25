@@ -1,0 +1,12 @@
+{
+  "account": "savings",
+  "currentBalance": "500.10",
+  "status": {
+    "operation": "deposit",
+    "transfer": {
+      "amount": "500.10",
+      "currency": "USD"
+    },
+    "code": "OK"
+  }
+}
