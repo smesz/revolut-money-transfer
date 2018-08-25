@@ -2,6 +2,7 @@ package com.revolut.money.transfer.model.rates;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
@@ -11,6 +12,7 @@ public class ExchangeRate {
 	@EmbeddedId
 	private ExchangeRateKey id;
 
+	@Column(name = "exchangeRate", precision = 10, scale = 5)
 	private BigDecimal exchangeRate;
 
 	public ExchangeRate(ExchangeRateKey id, BigDecimal exchangeRate) {
