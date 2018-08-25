@@ -20,7 +20,7 @@ public class MoneyFormatter {
 		return DECIMAL_FORMAT.format(amount);
 	}
 
-	public static BigDecimal parse(String amount) {
-		return new BigDecimal(amount).setScale(MONEY_SCALE, RoundingMode.DOWN);
+	public static BigDecimal parse(String amount, int scale) {
+		return new BigDecimal(amount).setScale(scale, RoundingMode.DOWN);
 	}
 }

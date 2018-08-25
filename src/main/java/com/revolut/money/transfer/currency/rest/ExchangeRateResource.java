@@ -1,5 +1,7 @@
 package com.revolut.money.transfer.currency.rest;
 
+import java.math.BigDecimal;
+
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -8,7 +10,6 @@ import javax.ws.rs.core.Response;
 
 import com.revolut.money.transfer.currency.dao.ExchangeRateDao;
 import com.revolut.money.transfer.model.dto.ExchangeRateDto;
-import com.revolut.money.transfer.model.rates.ExchangeRate;
 import com.revolut.money.transfer.util.MoneyFormatter;
 
 import io.dropwizard.hibernate.UnitOfWork;
@@ -26,10 +27,12 @@ public class ExchangeRateResource {
 	@POST
 	@UnitOfWork
 	public Response addExchangeRate(ExchangeRateDto request) {
-		ExchangeRate exchangeRate =
-				dao.save(request.getFromCurrency(), request.getToCurrency(), MoneyFormatter.parse(request.getRate()));
 
-		return Response.ok(exchangeRate).build();
+		BigDecimal rate = MoneyFormatter.parse(request.getRate(), 5);
+
+		return Response.ok(
+				dao.save(request.getFromCurrency(), request.getToCurrency(), rate)
+		).build();
 	}
 
 }

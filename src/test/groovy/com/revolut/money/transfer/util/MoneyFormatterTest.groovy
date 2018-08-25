@@ -22,12 +22,12 @@ class MoneyFormatterTest extends Specification {
     @Unroll
     def 'Should parse string money value to double'() {
         expect:
-        MoneyFormatter.parse(amount) == expected
+        MoneyFormatter.parse(amount, scale) == expected
 
         where:
-        amount      | expected
-        '12.50'     | 12.5
-        '10.00'     | 10
-        '10.345678' | 10.34567
+        amount      | scale | expected
+        '12.50'     | 2     | 12.5
+        '10.00'     | 2     | 10
+        '10.345678' | 5     | 10.34567
     }
 }

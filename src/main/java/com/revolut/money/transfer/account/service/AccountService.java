@@ -36,7 +36,7 @@ public class AccountService {
 	public MoneyOperationResponse makeDeposit(long accountId, MoneyOperationRequest request) {
 
 		Account account = accountDao.getOrThrowException(accountId);
-		BigDecimal amount = MoneyFormatter.parse(request.getAmount());
+		BigDecimal amount = MoneyFormatter.parse(request.getAmount(), 2);
 
 		account.makeDeposit(
 				depositFactory.create(amount, request.getCurrency(), account.getCurrency())
@@ -55,7 +55,7 @@ public class AccountService {
 
 	public MoneyOperationResponse makeWithdraw(long accountId, MoneyOperationRequest request) {
 		Account account = accountDao.getOrThrowException(accountId);
-		BigDecimal amount = MoneyFormatter.parse(request.getAmount());
+		BigDecimal amount = MoneyFormatter.parse(request.getAmount(), 2);
 
 		account.makeWithdraw(
 				withdrawFactory.create(amount, request.getCurrency(), account.getCurrency())
